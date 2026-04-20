@@ -1,61 +1,5 @@
-import { test, expect, type Page, type Locator } from '@playwright/test';
-
-/*  
-  === STEP 1. REMOVE DUPLICATES ===
-
-  1) We've moved ALL locators into an array of functions.
-     Each function takes a page -> and returns a Locator.
-*/
-const elements: Array<(page: Page) => Locator> = [
-  (page) => page.getByRole('link', { name: 'Playwright logo Playwright' }),
-  (page) => page.getByRole('link', { name: 'Docs' }),
-  (page) => page.getByRole('link', { name: 'MCP', exact: true }),
-  (page) => page.getByRole('link', { name: 'CLI', exact: true }),
-  (page) => page.getByRole('link', { name: 'API' }),
-  (page) => page.getByRole('button', { name: 'Node.js' }),
-  (page) => page.getByRole('link', { name: 'GitHub repository' }),
-  (page) => page.getByRole('link', { name: 'Discord server' }),
-  (page) => page.getByRole('button', { name: 'Switch between dark and light' }),
-  (page) => page.getByRole('button', { name: 'Search (Ctrl+K)' }),
-];
-
-/*
-  2) We moved the text values (title) into a separate array.
-     IMPORTANT:
-     - GitHub → no text
-     - Discord → no text
-     - Theme → no text
-     - Search → text is inconsistent → excluded
-*/
-const elementNames = [
-  'Playwright', // logo
-  'Docs',
-  'MCP',
-  'CLI',
-  'API',
-  'Node.js',
-  null, // GitHub — no text
-  null, // Discord — no text
-  null, // theme button — no text
-  null, // search button — text is inconsistent
-];
-
-/*
-  3) We've added the expected href values to an array.
-     Buttons without an href → set them to null.
-*/
-const hrefs = [
-  '/', // logo
-  '/docs/intro',
-  '/mcp/introduction',
-  '/agent-cli/introduction',
-  '/docs/api/class-playwright',
-  null, // Node.js button
-  'https://github.com/microsoft/playwright',
-  'https://aka.ms/playwright/discord',
-  null, // theme button
-  null, // search button
-];
+import { test, expect } from '@playwright/test';
+import { headerElements, headerElementNames, headerHrefs } from '../locators/header.locators';
 
 test.describe('Home Page Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -64,40 +8,39 @@ test.describe('Home Page Tests', () => {
 
   // === TEST 1: Checking the visibility of elements ===
   test('Checking the display of navigation elements header', async ({ page }) => {
-    for (const getLocator of elements) {
+    for (const getLocator of headerElements) {
       await expect.soft(getLocator(page)).toBeVisible();
     }
   });
 
   // === TEST 2: Checking the text of elements ===
   test('Checking the title of navigation elements header', async ({ page }) => {
-    for (let i = 0; i < elementNames.length; i++) {
-      if (elementNames[i] !== null) {
-        await expect.soft(elements[i](page)).toContainText(elementNames[i]!);
+    for (let i = 0; i < headerElementNames.length; i++) {
+      if (headerElementNames[i] !== null) {
+        await expect.soft(headerElements[i](page)).toContainText(headerElementNames[i]!);
       }
     }
   });
 
   // === TEST 3: Checking href elements ===
   test('Checking the href attribute of header navigation elements', async ({ page }) => {
-    for (let i = 0; i < hrefs.length; i++) {
-      if (hrefs[i] !== null) {
-        await expect.soft(elements[i](page)).toHaveAttribute('href', hrefs[i]!);
+    for (let i = 0; i < headerHrefs.length; i++) {
+      if (headerHrefs[i] !== null) {
+        await expect.soft(headerElements[i](page)).toHaveAttribute('href', headerHrefs[i]!);
       }
     }
   });
 
   // === TEST 4: Checking topic switching ===
   test('Theme switch updates data-theme-choice and localStorage', async ({ page }) => {
-    const themeButton = elements[8](page); // themes button
+    const themeButton = headerElements[8](page);
     const html = page.locator('html');
 
     const initialChoice = await html.getAttribute('data-theme-choice');
-
     await themeButton.click();
 
     const expectedChoice =
-      initialChoice === 'light' ? 'dark' : initialChoice === 'dark' ? 'light' : 'light'; // system → light
+      initialChoice === 'light' ? 'dark' : initialChoice === 'dark' ? 'light' : 'light';
 
     await expect.soft(html).toHaveAttribute('data-theme-choice', expectedChoice);
 

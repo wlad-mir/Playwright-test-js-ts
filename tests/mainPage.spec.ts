@@ -6,13 +6,9 @@ test.describe('Home Page Tests', () => {
     await page.goto('https://playwright.dev/');
   });
 
-  test('Header tests using Page Object', async ({ page }) => {
+  test('Header tests using unified method', async ({ page }) => {
     const header = new HeaderPage(page);
-
-    await header.expectAllVisible();
-    await header.expectTitles();
-    await header.expectHrefs();
-    await header.toggleTheme();
+    await header.checkHeader();
   });
 
   test('Checking the page title', async ({ page }) => {

@@ -4,15 +4,15 @@ import { headerElements, headerElementNames, headerHrefs } from '../locators/hea
 export class HeaderPage {
   constructor(private page: Page) {}
 
-  // Проверка видимости всех элементов
-  async expectAllVisible() {
+  // Checking the visibility of all elements
+  private async expectAllVisible() {
     for (const getLocator of headerElements) {
       await expect.soft(getLocator(this.page)).toBeVisible();
     }
   }
 
-  // Проверка текстов элементов
-  async expectTitles() {
+  // Checking element texts
+  private async expectTitles() {
     for (let i = 0; i < headerElementNames.length; i++) {
       if (headerElementNames[i] !== null) {
         await expect.soft(headerElements[i](this.page)).toContainText(headerElementNames[i]!);
@@ -20,8 +20,8 @@ export class HeaderPage {
     }
   }
 
-  // Проверка href
-  async expectHrefs() {
+  // Check href
+  private async expectHrefs() {
     for (let i = 0; i < headerHrefs.length; i++) {
       if (headerHrefs[i] !== null) {
         await expect.soft(headerElements[i](this.page)).toHaveAttribute('href', headerHrefs[i]!);
@@ -29,8 +29,8 @@ export class HeaderPage {
     }
   }
 
-  // Переключение темы
-  async toggleTheme() {
+  // Checking the theme switch
+  private async expectThemeToggle() {
     const themeButton = headerElements[8](this.page);
     const html = this.page.locator('html');
 
@@ -44,5 +44,13 @@ export class HeaderPage {
 
     const storedTheme = await this.page.evaluate(() => localStorage.getItem('theme'));
     expect(storedTheme).toBe(expectedChoice);
+  }
+
+  // === A SINGLE METHOD FOR CHECKING THE ENTIRE HEADER ===
+  async checkHeader() {
+    await this.expectAllVisible();
+    await this.expectTitles();
+    await this.expectHrefs();
+    await this.expectThemeToggle();
   }
 }

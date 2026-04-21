@@ -1,6 +1,6 @@
 import { type Page, type Locator } from '@playwright/test';
 
-// Локаторы хедера
+// Header locators
 export const headerElements: Array<(page: Page) => Locator> = [
   (page) => page.getByRole('link', { name: 'Playwright logo Playwright' }),
   (page) => page.getByRole('link', { name: 'Docs' }),
@@ -14,7 +14,7 @@ export const headerElements: Array<(page: Page) => Locator> = [
   (page) => page.getByRole('button', { name: 'Search (Ctrl+K)' }),
 ];
 
-// Тексты элементов (только те, у кого есть текст)
+// Element text (only those with text)
 export const headerElementNames = [
   'Playwright',
   'Docs',
@@ -22,13 +22,13 @@ export const headerElementNames = [
   'CLI',
   'API',
   'Node.js',
-  null, // GitHub — нет текста
-  null, // Discord — нет текста
-  null, // theme button — нет текста
-  null, // search button — текст нестабилен
+  null, // GitHub — no text
+  null, // Discord — no text
+  null, // theme button — no text
+  null, // search button — The text is unstable
 ];
 
-// href элементов
+// href elements
 export const headerHrefs = [
   '/',
   '/docs/intro',
